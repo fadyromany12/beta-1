@@ -20,12 +20,10 @@ const SHEET_NAMES = {
   movementRequests: "MovementRequests",
   announcements: "Announcements",
   roleRequests: "Role Requests",
-  performance: "Performance_Reviews", 
   historyLogs: "Employee_History",
   rbac: "RBAC_Config",
   overtime: "Overtime_Requests",
-  breakConfig: "Break_Config",
-
+  breakConfig: "Break_Config"
 };
 // --- Break Time Configuration (in seconds) ---
 const PLANNED_BREAK_SECONDS = 15 * 60; // 15 minutes
@@ -4417,89 +4415,6 @@ function addColumnsToSheet(sheet, newHeaders) {
     // Append to the next available column
     sheet.getRange(1, lastCol + 1, 1, headersToAdd.length).setValues([headersToAdd]);
   }
-}
-
-
-// ==========================================
-// === PHASE 5: PERFORMANCE & OFFBOARDING ===
-// ==========================================
-
-// 3. Updated Performance Review
-function webSubmitPerformanceReview(reviewData) {
-  // Checks if user has permission to submit reviews
-  const { userEmail: adminEmail, userData, ss } = getAuthorizedContext('SUBMIT_PERFORMANCE');
-  
-  const targetEmail = reviewData.employeeEmail.toLowerCase();
-  
-  // Contextual Check: Can only review OWN team (unless Superadmin)
-  const targetSupervisor = userData.emailToSupervisor[targetEmail];
-  const targetProjectMgr = userData.emailToProjectManager[targetEmail];
-  const adminRole = userData.emailToRole[adminEmail];
-
-  const isAuthorized = (adminRole === 'superadmin') || 
-                       (targetSupervisor === adminEmail) || 
-                       (targetProjectMgr === adminEmail);
-
-  if (!isAuthorized) throw new Error("Permission denied. You can only review your own team members.");
-
-  const targetUser = userData.userList.find(u => u.email === targetEmail);
-  if (!targetUser) throw new Error("Employee not found.");
-
-  const perfSheet = getOrCreateSheet(ss, SHEET_NAMES.performance);
-  perfSheet.appendRow([
-    `REV-${new Date().getTime()}`,
-    targetUser.empID,
-    reviewData.year,
-    reviewData.period,
-    reviewData.rating,
-    reviewData.comments,
-    new Date()
-  ]);
-
-  return "Performance review submitted successfully.";
-}
-
-/**
- * 2. GET PERFORMANCE HISTORY (Employee/Manager)
- * Returns list of past reviews for a specific user.
- */
-function webGetPerformanceHistory(targetEmail) {
-  const viewerEmail = Session.getActiveUser().getEmail().toLowerCase();
-  const ss = getSpreadsheet();
-  const dbSheet = getOrCreateSheet(ss, SHEET_NAMES.database);
-  const userData = getUserDataFromDb(dbSheet);
-  
-  const emailToFetch = targetEmail || viewerEmail;
-  const viewerRole = userData.emailToRole[viewerEmail] || 'agent';
-
-  // Security Check: Agents can only see their own. Managers can see team's.
-  if (viewerRole === 'agent' && emailToFetch !== viewerEmail) {
-    throw new Error("Permission denied.");
-  }
-
-  // Get Employee ID
-  const targetUser = userData.userList.find(u => u.email === emailToFetch);
-  if (!targetUser) return []; // No user found
-
-  const perfSheet = getOrCreateSheet(ss, SHEET_NAMES.performance);
-  const data = perfSheet.getDataRange().getValues();
-  const reviews = [];
-
-  // Columns: ReviewID(0), EmpID(1), Year(2), Period(3), Rating(4), Comments(5), Date(6)
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][1] === targetUser.empID) {
-      reviews.push({
-        id: data[i][0],
-        year: data[i][2],
-        period: data[i][3],
-        rating: data[i][4],
-        comments: data[i][5],
-        date: convertDateToString(new Date(data[i][6]))
-      });
-    }
-  }
-  
-  return reviews.reverse(); // Newest first
 }
 
 
