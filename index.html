@@ -1667,10 +1667,7 @@ body.dark-mode .status-offline { background-color: #374151; color: #9ca3af; }
             <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             <span class="nav-button-text">Coaching</span>
           </button>
-          <button id="performance-tab-button" class="tab-button" onclick="showTab('performance')">
-            <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
-            <span class="nav-button-text">Performance</span>
-          </button>
+
 
 
           <button id="overtime-tab-button" class="tab-button" onclick="showTab('overtime')">
@@ -2423,60 +2420,6 @@ body.dark-mode .status-offline { background-color: #374151; color: #9ca3af; }
           </div>
         </div>
 
-        <!-- ================================== -->
-        <!--  TAB 15: Performance PANEL -->
-        <!-- ================================== -->
-
-
-<div id="performance-panel" class="tab-panel">
-  <h2>Performance Management</h2>
-  
-  <div id="manager-review-section" style="display:none; margin-bottom:30px; background:var(--input-bg); padding:20px; border-radius:8px; border:1px solid var(--border-color);">
-    <h3 style="margin-top:0; color:var(--konecta-blue);">Submit New Review</h3>
-    <form id="perf-form">
-      <div class="form-row">
-        <div class="form-group">
-  <label>Select Employee</label>
-  <div id="perf-employee-select-container"></div>
-</div>
-        <div class="form-group">
-          <label>Review Period</label>
-          <select id="perf-period">
-            <option value="Q1">Q1</option>
-            <option value="Q2">Q2</option>
-            <option value="Q3">Q3</option>
-            <option value="Q4">Q4</option>
-            <option value="Annual">Annual</option>
-            <option value="Probation">Probation</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Year</label>
-          <input type="number" id="perf-year" value="2025">
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Rating (1 - Poor to 5 - Excellent)</label>
-        <div style="display:flex; gap:15px; align-items:center;">
-          <input type="range" id="perf-rating" min="1" max="5" step="1" oninput="document.getElementById('rating-val').innerText = this.value">
-          <span id="rating-val" style="font-weight:bold; font-size:1.2rem; color:var(--konecta-dark);">3</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Manager Comments</label>
-        <textarea id="perf-comments" rows="3" placeholder="Highlight achievements and areas for improvement..."></textarea>
-      </div>
-      <button type="button" class="btn-primary" onclick="submitPerformanceReview()">Submit Review</button>
-    </form>
-    <div id="perf-submit-status" class="status-message"></div>
-  </div>
-
-  <h3 style="margin-bottom:15px;">My Performance History</h3>
-  <div id="perf-history-list" class="request-list">
-    <p class="text-color-secondary">Loading reviews...</p>
-  </div>
-</div>
-
 
         <!-- ================================== -->
         <!--  TAB 17: Overtime PANEL -->
@@ -2827,9 +2770,6 @@ function showTab(tabName) {
       const histContainer = document.getElementById('history-user-select-container');
       if(histContainer) histContainer.style.display = 'block';
     
-    } else if (tabName === 'performance') {
-      loadPerformanceTab();
-      
     } else if (tabName === 'overtime') {
       loadOvertimeTab();
     
